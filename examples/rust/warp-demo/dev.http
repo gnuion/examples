@@ -1,0 +1,5 @@
+## Quick Dev
+## X-Auth-Token: {userid}.exp.signature
+GET http://127.0.0.1:8000/todos/555
+X-Auth-Token: 1.exp.signature
+Content-Type: application/json
