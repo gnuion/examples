@@ -5,8 +5,12 @@
 ### Watch command
 
 ```shell
-cargo watch -qc -w src/ -x 'test model_db_ -- --test-threads=1 --nocapture'
-cargo watch -qc -w src/ -x 'test model_todo_ -- --test-threads=1 --nocapture'
+# Dev app
+cargo watch -qc -w src/ -x 'run -- ../frontend/web-folder'
+# Test for model
+cargo watch -qc -w src/ -x 'test model_ -- --test-threads=1 --nocapture'
+# Test for web
+cargo watch -qc -w src/ -x 'test web_ -- --test-threads=1 --nocapture'
 ```
 
 - q - quiet

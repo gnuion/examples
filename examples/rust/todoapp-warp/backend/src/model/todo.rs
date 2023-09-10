@@ -1,12 +1,14 @@
 #![allow(unused)]
 
+use serde::Deserialize;
+use serde_derive::Serialize;
 use sqlx::{Execute, Postgres, QueryBuilder};
 
 use super::db::Db;
 use crate::{model, security::UserCtx};
 
 // region: Todo Types
-#[derive(sqlx::FromRow, Debug, Clone)]
+#[derive(sqlx::FromRow, Debug, Clone, Serialize, Deserialize)]
 pub struct Todo {
   pub id: i64,
   pub cid: i64, // create id
@@ -14,13 +16,13 @@ pub struct Todo {
   pub status: TodoStatus,
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Deserialize)]
 pub struct TodoPatch {
   pub title: Option<String>,
   pub status: Option<TodoStatus>,
 }
 
-#[derive(sqlx::Type, Debug, Clone, PartialEq, Eq)]
+#[derive(sqlx::Type, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[sqlx(type_name = "TODO_STATUS_ENUM")]
 #[sqlx(rename_all = "lowercase")]
 pub enum TodoStatus {
@@ -76,12 +78,33 @@ impl TodoMac {
     id: i64,
     data: TodoPatch,
   ) -> Result<Todo, model::Error> {
-    let sql = "UPDATE todo SET title = $1 WHERE id = $2 RETURNING id, cid, title, status";
+    // let sql = "UPDATE todo SET status = $1 WHERE id = $2 RETURNING id, cid, title, status";
+
+    let mut query_builder: QueryBuilder<Postgres> =
+      QueryBuilder::new("UPDATE todo SET title = $1, status = $2 WHERE id = $3");
+    query_builder.push(" RETURNING id, cid, title, status");
+    let sql = query_builder.build().sql();
     let query = sqlx::query_as(&sql)
-      .bind(data.title.unwrap())
-      .bind(1000 as i64);
+      // .bind(data.title)
+      .bind(data.title)
+      .bind(data.status)
+      .bind(id);
     let todo = query.fetch_one(db).await;
     handle_fetch_one_result(todo, Self::TABLE, id)
+
+    // if let Some(title) = data.title {
+    //   query_builder.push(format!(" title = '{}'", title));
+    // }
+    // if let Some(status) = data.status {
+    //   query_builder.push(" status = $1");
+    //   query_builder.push_bind(status);
+    // }
+    // query_builder.push(format!(" WHERE id = {}", id));
+    // query_builder.push(" RETURNING id, cid, title, status;");
+
+    // let sql = query_builder.build().sql();
+
+    // handle_fetch_one_result(todo, Self::TABLE, id)
   }
 
   pub async fn delete(db: &Db, _utx: &UserCtx, id: i64) -> Result<Todo, model::Error> {
