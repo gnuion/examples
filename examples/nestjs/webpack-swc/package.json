@@ -1,0 +1,25 @@
+{
+  "name": "@gnuion/example-webpack-swc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "nest build",
+    "dev": "nest start --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nestjs/cli": "^10.3.2",
+    "@types/node": "^20.14.2",
+    "swc-loader": "^0.2.6",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.3.9",
+    "@nestjs/core": "^10.3.9",
+    "@nestjs/platform-express": "^10.3.9",
+    "reflect-metadata": "^0.2.2"
+  }
+}
