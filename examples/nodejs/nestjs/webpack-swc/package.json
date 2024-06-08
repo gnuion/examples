@@ -1,5 +1,5 @@
 {
-  "name": "@gnuion/example-webpack-swc",
+  "name": "@gnuion/example-nestjs-webpack-swc",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
